@@ -1,0 +1,2 @@
+curl --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJ6aXAiOiJERUYiLCJhbGciOiJFUzI1NiJ9.eNoljEEKgzAQAP-yZw_ZzcZt_Ir0kNUEhKqla0Ep_bsRjwMz84PJDDooyiGiC84PTjSqDlqQC7H3jK2kSEHCKAoN2FdrYIdtea6Y9zd0KMyERA_XwGd95brsIY3ztFzBrT7_J31ZH1A.MEYCIQDsF_lrZeGCi4w1RQgULS6DGHFLJbReTk0rqZntBCL3mQIhAIeVMjEppXRqCWDar3dvZezGJewHcnkRpEZHBjNZ2ONw" \
+	"Accept: application/json" "Content-Type: application/json" -X GET -k https://n1vsmnnmiwc002.nonprod.empf.local//nnmi/api/topo/v1/node/3f550281-f2b8-4c2b-8989-b5dfd75dbc39

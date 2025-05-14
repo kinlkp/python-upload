@@ -1,0 +1,9 @@
+[root@n1vsmsautl0010 cgi-bin]# cat testpy
+#!/usr/bin/python3
+
+
+print("Content-Type: text/plain\n")
+print("i am ok")
+
+print("Content-Type: text/html\n")
+print("<!doctype html><title>Hello</title><h2>hello world</h2>")

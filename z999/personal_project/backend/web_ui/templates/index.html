@@ -1,0 +1,46 @@
+{% extends "default.html" %}
+
+{% block head %}
+    {{ super()}}
+    <meta http-equiv="refresh" content="60">
+{% endblock %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block content %}
+<div class="container">
+    <h2>Hosts</h2>
+    <p>last update at {{ now }}</p>
+    <table class="table">
+        <tr>
+            <th>hostname</th>
+            <th>cpu</th>
+            <th>memory</th>
+        </tr>  
+    {% for x in hosts %}
+        <tr>
+            <td>{{ x["hostname"] }}</td>
+            {% if x["cpu"] == 1 %}
+            <td><span class="dot"></span></td>
+            {% else %}
+            <td><span class="dot2"></span></td>
+            {% endif %}
+            {% if x["memory"] == 1 %}
+            <td><span class="dot"></span></td>
+            {% else %}
+            <td><span class="dot2"></span></td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
+    <div>
+        <div><a href="/">Back to home</a></div>
+        {% if not form.name.data %}
+            <div style="width:120px;float:right;">
+                <span>{{ wtf.quick_form(form) }}</span>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+[
+{"hostname":"host1","ping":1, "cpu":0, "memory":0},
+{"hostname":"host2","ping":0, "cpu":1, "memory":1},
+{"hostname":"host3","ping":1, "cpu":1, "memory":0},
+{"hostname":"abcd4","ping":1, "cpu":1, "memory":0},
+{"hostname":"hh45897832","ping":1, "cpu":1, "memory":1}
+]

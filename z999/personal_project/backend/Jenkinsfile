@@ -1,0 +1,27 @@
+pipeline {
+    agent {
+        docker { 
+            image 'python:3.10'
+            args '-u root'
+        }
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                    checkout([$class: 'GitSCM', branches: [[name: 'main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/brianlk/test.git']]])
+            }
+        }
+        stage('Build') {
+            steps {
+                git branch: 'main', url: 'https://github.com/brianlk/test.git'
+                sh 'pip install -e .'
+                sh 'pip install pytest'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'python -m pytest tests'
+            }
+        }
+    }
+}
