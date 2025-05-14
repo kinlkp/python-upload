@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 import os
 import re
@@ -22,34 +22,54 @@ def compare(rpm_version, rpm_release, ey_needs):
     rpm_arr = rpm_version.split('.')
     rpm_release = re.sub('.el8.*', '', rpm_release)
     rpm_arr += rpm_release.split('.')
+
     try:
         for i in range(len(rpm_arr)):
-            if int(rpm_arr[i]) > int(ey_want[i+1].strip() or 0):
+            try:
+                if int(rpm_arr[i]) > int(ey_want[i+1].strip() or 0):
             # if ey version is > os rpm version, return False
-                return True, rpm_arr
-            if int(rpm_arr[i]) == int(ey_want[i+1].strip() or 0):
-                continue
-            else:
-                return "OS", False, rpm_arr
+                    return "OS", True, rpm_arr
+                if int(rpm_arr[i]) == int(ey_want[i+1].strip() or 0):
+                    continue
+                else:
+                    return "OS", False, rpm_arr
         # rpm verion === ey version
-        return True, rpm_arr
-    except Exception as e:
-        print(f"Exception: {ey_want} {str(e)}")
+            except ValueError:
+                if rpm_arr[i] > ey_want[i+1].strip():
+            # if ey version is > os rpm version, return False
+                    return "OS", True, rpm_arr
+                if rpm_arr[i] == ey_want[i+1].strip():
+                    continue
+                else:
+                    return "OS", False, rpm_arr
+        return "OS", True, rpm_arr
+    except:
+        print(f"{ey_want} exception")
 
 
 if __name__ == "__main__":
     count = 0
-    pattern = r'^([^\.]+(?:\-1\.8\.0\-openjdk.*)?)\-([a-z0-9]+)[\-\.](\d+)[\-\.]?(\d+)?[\.\-]?(\d+)?[\.\-](\d+)?[\.\-](\d+)?'
-    pattern2 = r'^([a-z0-9\.\-]+)\-(.+)\-(\d+)'
+    #pattern = r'^([^\.]+(?:\-1\.8\.0\-openjdk.*)?)\-([a-z0-9]+)[\-\.](\d+)[\-\.]?(\d+)?[\.\-]?(\d+)?[\.\-](\d+)?[\.\-](\d+)?'
+    #pattern2 = r'^([a-z0-9\.\-]+)\-(.+)\-(\d+)'
     with open("ey.list") as myrpm:
         for row in myrpm:
+            pattern = r'^([^\.]+(?:\-1\.8\.0\-openjdk.*)?)\-([a-z0-9]+)[\-\.](\d+)[\-\.]?(\d+)?[\.\-]?(\d+)?[\.\-](\d+)?[\.\-](\d+)?'
+            pattern2 = r'^([a-z0-9\.\-]+)\-(.+)\-(\d+)'
             row = row.rstrip()
             # Get EY version
+            if "openssl" in row:
+                pattern = r'^(openssl[\-a-z]*)-(\d+).(\d+).([a-z0-9]+)-(\d+).el8[_0-9]*'
+            if "cockpit-podman" in row:
+                pattern = r'^(cockpit-podman)-(\d+)\.?(\d+)?-(\d+).modul'
+            if "less" in row:
+                pattern = r'^(less)-(\d+)\.?(\d+)?-(\d+).el8'
+            if "jose" in row:
+                pattern = r'^(jose)-(\d+)\.?(\d+)?-(\d+).el8'
             ey_needs = re.findall(pattern, row)
             if len(ey_needs) == 0:
                 # print(f"Error: {str(row)}")
                 ey_needs = re.findall(pattern2, row)
-                print(ey_needs)
+                print(f"{ey_needs} cannot match")
             else:
                 ey_needs = list(ey_needs[0])
                 ey_needs = [x for x in ey_needs if x != '']
