@@ -27,16 +27,16 @@ def compare(rpm_version, rpm_release, ey_needs):
         for i in range(len(rpm_arr)):
             try:
                 if int(rpm_arr[i]) > int(ey_want[i+1].strip() or 0):
-            # if ey version is > os rpm version, return False
+                    # if ey version is > os rpm version, return False
                     return "OS", True, rpm_arr
                 if int(rpm_arr[i]) == int(ey_want[i+1].strip() or 0):
+                    # rpm verion === ey version, go to check next value 
                     continue
                 else:
+                    # if os version is < os rpm version, return False
                     return "OS", False, rpm_arr
-        # rpm verion === ey version
             except ValueError:
                 if rpm_arr[i] > ey_want[i+1].strip():
-            # if ey version is > os rpm version, return False
                     return "OS", True, rpm_arr
                 if rpm_arr[i] == ey_want[i+1].strip():
                     continue
@@ -49,8 +49,6 @@ def compare(rpm_version, rpm_release, ey_needs):
 
 if __name__ == "__main__":
     count = 0
-    #pattern = r'^([^\.]+(?:\-1\.8\.0\-openjdk.*)?)\-([a-z0-9]+)[\-\.](\d+)[\-\.]?(\d+)?[\.\-]?(\d+)?[\.\-](\d+)?[\.\-](\d+)?'
-    #pattern2 = r'^([a-z0-9\.\-]+)\-(.+)\-(\d+)'
     with open("ey.list") as myrpm:
         for row in myrpm:
             pattern = r'^([^\.]+(?:\-1\.8\.0\-openjdk.*)?)\-([a-z0-9]+)[\-\.](\d+)[\-\.]?(\d+)?[\.\-]?(\d+)?[\.\-](\d+)?[\.\-](\d+)?'
