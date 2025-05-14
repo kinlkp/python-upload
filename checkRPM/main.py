@@ -63,6 +63,8 @@ if __name__ == "__main__":
                 pattern = r'^(less)-(\d+)\.?(\d+)?-(\d+).el8'
             if "jose" in row:
                 pattern = r'^(jose)-(\d+)\.?(\d+)?-(\d+).el8'
+            if "python3.11" in row:
+                pattern = r'(^python3.11)-(\d+).(\d+).(\d+)'
             ey_needs = re.findall(pattern, row)
             if len(ey_needs) == 0:
                 # print(f"Error: {str(row)}")
@@ -71,6 +73,8 @@ if __name__ == "__main__":
             else:
                 ey_needs = list(ey_needs[0])
                 ey_needs = [x for x in ey_needs if x != '']
+                print(ey_needs[1])
+                continue
                 # Get rpm version in OS
                 os_version = find_rpm_version(ey_needs[0])
                 if os_version:
