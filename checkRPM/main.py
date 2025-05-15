@@ -2,6 +2,7 @@
 
 import os
 import re
+import sys
 import subprocess
 
 
@@ -25,12 +26,17 @@ def compare(rpm_version, rpm_release, ey_needs):
 
     try:
         for i in range(len(rpm_arr)):
+            if (len(rpm_arr) - len(ey_want)) >= 1 and i == (len(rpm_arr) - 2):
+                return "OS", True, rpm_arr
+
+            if len(rpm_arr) == len(ey_want) and i == (len(rpm_arr) - 1):
+                return "OS", True, rpm_arr
             try:
                 if int(rpm_arr[i]) > int(ey_want[i+1].strip() or 0):
                     # if ey version is > os rpm version, return False
                     return "OS", True, rpm_arr
                 if int(rpm_arr[i]) == int(ey_want[i+1].strip() or 0):
-                    # rpm verion === ey version, go to check next value 
+                    # rpm verion === ey version, go to check next value
                     continue
                 else:
                     # if os version is < os rpm version, return False
@@ -44,14 +50,15 @@ def compare(rpm_version, rpm_release, ey_needs):
                     return "OS", False, rpm_arr
         return "OS", True, rpm_arr
     except:
-        print(f"{ey_want} exception")
+        print(f"{rpm_arr} {ey_want} exception")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
     count = 0
     with open("ey.list") as myrpm:
         for row in myrpm:
-            pattern = r'^([^\.]+(?:\-1\.8\.0\-openjdk.*)?)\-([a-z0-9]+)[\-\.](\d+)[\-\.]?(\d+)?[\.\-]?(\d+)?[\.\-](\d+)?[\.\-](\d+)?'
+            pattern = r'^([^\.]+(?:\-1\.8\.0\-openjdk.*)?)\-([a-z0-9]+)[\-\.](\d+)[\-\.]?(\d+)?[\.\-]?(\d+)?[\.\-](\d+)?[\.\-              ](\d+)?'
             pattern2 = r'^([a-z0-9\.\-]+)\-(.+)\-(\d+)'
             row = row.rstrip()
             # Get EY version
@@ -62,9 +69,9 @@ if __name__ == "__main__":
             if "less" in row:
                 pattern = r'^(less)-(\d+)\.?(\d+)?-(\d+).el8'
             if "jose" in row:
-                pattern = r'^(jose)-(\d+)\.?(\d+)?-(\d+).el8'
+                pattern = r'^(?:(jose)|(libjose))-(\d+)\.?(\d+)?-(\d+).el8'
             if "python3.11" in row:
-                pattern = r'(^python3.11)-(\d+).(\d+).(\d+)'
+                pattern = r'^(?:(python3.11)|(python3.11-libs)|(python3.11-cryptography)|(python3.11-pip-wheel)|(python3.11-setuptools-wheel))-(\d+).(\d+).(\d+)'
             ey_needs = re.findall(pattern, row)
             if len(ey_needs) == 0:
                 # print(f"Error: {str(row)}")
@@ -73,12 +80,10 @@ if __name__ == "__main__":
             else:
                 ey_needs = list(ey_needs[0])
                 ey_needs = [x for x in ey_needs if x != '']
-                print(ey_needs[1])
-                continue
                 # Get rpm version in OS
                 os_version = find_rpm_version(ey_needs[0])
                 if os_version:
                     rpm_version, rpm_release = os_version.split(" ")
-                    print(f"{ey_needs[0]} ! {compare(rpm_version, rpm_release, ey_needs)} > EY {ey_needs}")
+                    print(f"{ey_needs[0]} ! {compare(rpm_version, rpm_release, ey_needs)} > 'Should be' {ey_needs}")
                 else:
                     print(f"Warning: {ey_needs[0]} not found in OS.")
