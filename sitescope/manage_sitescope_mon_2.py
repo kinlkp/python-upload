@@ -41,7 +41,7 @@ def check_monitor(host: str, group_name: str, web_URL: str):
  
  
 def main(args: argparse.Namespace):
-    blackout_duration = 24 * 3300 * 1000
+    blackout_duration = 1 * 3300 * 1000
     if args.action == 'enable':
         mon_state = 'true'
     elif args.action == 'disable':
