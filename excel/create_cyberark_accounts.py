@@ -71,6 +71,7 @@ def get_account_name(hostname):
     if hostname[2] == "p":
         outputs += f"{hostname}-ilo,administrator,Cat B System team,{hostname} ilo\n"
         outputs += f"{hostname}-idrac,administrator,Cat B System team,{hostname} idrac\n"
+        outputs += f"{hostname},root,Cat B System team,{hostname} root\n"
 
     return outputs
 
