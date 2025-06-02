@@ -59,6 +59,8 @@ def get_account_name(hostname):
     # Print system team accounts
     sy = account_name + "sy" + app + ad
     outputs += f"{hostname},{sy},Cat B System team,{app} server\n"
+    de = account_name + "de" + app + ad
+    outputs += f"{hostname},{de},Cat B Dev team,{app} server\n"
     
     # Print system team accounts
     if hostname[9] == "w":
