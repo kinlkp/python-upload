@@ -103,6 +103,10 @@ def main(args: argparse.Namespace):
             }
             response = requests.post(set_url, data=params, verify=False, 
                                      auth=HTTPBasicAuth('administrator', SITESCOPE_PASSWORD))
+            
+            if host[2] == "p":
+                print(f"WARNING: You need to disable NNMI - {host}.")
+
             if response.status_code == 204:
                 print(f"{response.status_code}  {host} {sys.argv[2]} start from {start_suppress} for {blackout_duration/1000} secs.")
             else:
