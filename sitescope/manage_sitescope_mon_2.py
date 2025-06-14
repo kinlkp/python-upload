@@ -21,6 +21,7 @@ from urllib3 import disable_warnings
  
 disable_warnings(InsecureRequestWarning)
  
+HOW_LONG = 1
    
 SITESCOPE_PASSWORD = os.environ['SITESCOPE_PASSWORD']
 
@@ -41,7 +42,7 @@ def check_monitor(host: str, group_name: str, web_URL: str):
  
  
 def main(args: argparse.Namespace):
-    blackout_duration = 1 * 3300 * 1000
+    blackout_duration = HOW_LONG * 3300 * 1000
     if args.action == 'enable':
         mon_state = 'true'
     elif args.action == 'disable':
