@@ -42,7 +42,9 @@ def check_monitor(host: str, group_name: str, web_URL: str):
  
  
 def main(args: argparse.Namespace):
-    blackout_duration = HOW_LONG * 3300 * 1000
+
+    blackout_duration = args.length * 3300 * 1000
+	
     if args.action == 'enable':
         mon_state = 'true'
     elif args.action == 'disable':
@@ -120,9 +122,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Manage sitescope")
     # parser.add_argument('--env', '-e', type=str, help="environment is np / pr")
     parser.add_argument('--action', '-a', type=str, help="action is enable / disable / check")
-    parser.add_argument('--hostname', type=str, help="hostname")
+    parser.add_argument('--hostname', type=str, help="Hostname")
     parser.add_argument('--time', '-t', type=str, help="Suppress Time", required=False)
     parser.add_argument('--desc', '-d', type=str, help="Description", required=False)
+    parser.add_argument('--length', '-l', default=1, type=int, help="Blackout length", required=False)
     args = parser.parse_args()
  
     main(args)
