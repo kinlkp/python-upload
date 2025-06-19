@@ -155,7 +155,7 @@ class SiteScopeClient():
         find_url = f'{web_URL}/api/monitors/group/properties'
         params = {'fullPathToGroup': group_name}
         response = requests.get(find_url, params=params, verify=False,
-                                auth=HTTPBasicAuth(os.environ['SITESCOPE_USER'], SITESCOPE_PASSWORD))
+                                auth=HTTPBasicAuth(os.environ['SITESCOPE_USER'], SiteScopeClient.SITESCOPR_PASSWORD))
         output = json.loads(response.text)
         print(f"{host} {output['status']}")
 
