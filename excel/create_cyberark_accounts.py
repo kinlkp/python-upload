@@ -66,6 +66,7 @@ def get_account_name(hostname):
     if hostname[9] == "w":
         outputs += f"{hostname},{account_name}sylocaad0002,Cat B System team,{app} server\n"
         outputs += f"{hostname},{account_name}sydomaad0001,Cat B System team,{app} server\n"
+        outputs += f"{hostname},{account_name}dedomaad0001,Cat B System team,{app} server\n"
         outputs += f"{hostname},{account_name}sycaadad0001,Cat B System team,{app} server\n"
     elif hostname[9] == "l":
         outputs += f"{hostname},root,Cat B System team,{app} server\n"
