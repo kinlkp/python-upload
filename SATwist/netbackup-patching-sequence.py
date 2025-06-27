@@ -53,12 +53,21 @@ def auth():
 
 class PatchedHost:
 
-    def __init__(self):
+    def __init__(self, ts, hostname):
+        self.ts = ts
+        self.hostname = hostname
+
+
+    def start_to_patch():
         pass
 
 
 def main():
+    
     ts = auth()
+
+    host = PatchedHost(ts, "n1psmwind0001")
+    host.start_to_patch()
 
 
 if __name__ == '__main__':
