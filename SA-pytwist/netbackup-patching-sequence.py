@@ -4,11 +4,15 @@ import os
 import re
 import subprocess
 import sys
+import time
 
 from pytwist import twistserver
 from pytwist.com.opsware.search import Filter
 from pytwist.com.opsware.device import DeviceGroupVO
 from pytwist.com.opsware.server import ServerRef
+
+from pytwist.com.opsware.job import JobNotification, JobSchedule
+from pytwist.com.opsware.script import ServerScriptJobArgs
 
 
 HOST_REBOOT_SEQ = [
@@ -20,6 +24,11 @@ HOST_REBOOT_SEQ = [
     ["n1psmwind0006", "n2psmwind0006"],
     ["n1psmwind0007", "n2psmwind0007"]
 ]
+
+os.environ['TZ'] = 'Asia/Hong_Kong'
+time.tzset()
+
+WIN_SCRIPT_NAME = "win-reboot-after-patch-install"
 
 
 def auth():
@@ -51,7 +60,7 @@ def auth():
     return ts
 
 
-class CommonSettings:
+class PatchAllHostsInDeviceGroup:
     _instance = None  # Class-level variable to hold the single instance
 
 
@@ -67,12 +76,18 @@ class CommonSettings:
         # __init__ is called every time, but only initializes the first time
         if not hasattr(self, '_initialized'):  # Prevent re-initialization
             self._initialized = True
-            ServerService = ts.server.ServerService
-            DGS = ts.device.DeviceGroupService
+            self.ts = ts
+            ServerService = self.ts.server.ServerService
+            DGS = self.ts.device.DeviceGroupService
             ref = DGS.getDeviceGroupByPath(smaxsubfolder.split('/'))
             self.deviceRefs = DGS.getDevices(ref)
             self.deviceRefMap = {}
-            for devRef in self.deviceRefs:               
+            self.create_device_map()
+
+
+    def create_device_map(self):
+        ServerService = self.ts.server.ServerService
+        for devRef in self.deviceRefs:               
                 vo = ServerService.getServerVO(devRef)
                 pattern = r'(\w+)\..*'
                 match = re.search(pattern, vo.getHostName())
@@ -84,41 +99,77 @@ class CommonSettings:
         return self.deviceRefMap[hostname]
 
 
-    def get_tmr0000():
-        import os
-        import time
+    def get_tmr0000(self):
         from datetime import date, datetime, timedelta
-
-        os.environ['TZ'] = 'Asia/Hong_Kong'
-        time.tzset()
     
         today = datetime.now()
         tmr = today + timedelta(1)    # Add 1 day from today
         tmr_0000 = datetime.combine(tmr, datetime.min.time()).timestamp()
 
         return int(tmr_0000)
+    
+
+    def schedule_win_patch_install(self, tmr_0000, device_group_path):
+        jobSchedule = JobSchedule()
+        jobNotification = JobNotification()
+        ServerService = self.ts.server.ServerService
+
+        jobSchedule.startDate = tmr_0000 + 28800        # Start to install patch at 9am
+        args = ServerScriptJobArgs()
+        args.timeOut = 60 * 60
+        args.parameters = device_group_path
+        SearchService = self.ts.search.SearchService
+        args.targets = SearchService.findObjRefs('ServerVO.name = "PCORE1"', 'device')
+        scriptRef = SearchService.findObjRefs('ServerScriptVO.name = "xxx-win-install-software"', 'server_script')[0]
+        userTag = device_group_path
+        ServerScriptService = self.ts.script.ServerScriptService
+        jobRef = ServerScriptService.startServerScript(scriptRef, args, userTag, jobNotification, jobSchedule)
+        print(f"Created job {jobRef} for patch installtions")
 
 
-class PatchedHost:
+    def reboot_script_ref(self):
+        SearchService = self.ts.search.SearchService
+        win_scriptRef = SearchService.findObjRefs(f'ServerScriptVO.name = {WIN_SCRIPT_NAME}', 'server_script')[0]
+        return win_scriptRef
 
-    def __init__(self, ts, hostname):
-        self.ts = ts
-        self.hostname = hostname
 
-    def start_to_patch():
-        pass
+class RebootHosts:
+
+    def __init__(self, settings, hostnames):
+        self.settings = settings
+        self.ts = self.settings.ts
+        self.targets = []
+        for h in hostnames:
+            self.targets.append(self.settings.get_device_ref(h))
+
+
+    def schedule_reboot(self, tmr_0000, reboot_script_ref):
+        ServerScriptService = self.ts.script.ServerScriptService
+        jobSchedule = JobSchedule()
+        jobNotification = JobNotification()
+        reboot_time = tmr_0000 + 39600       # Start to reboot at 11am
+        jobSchedule.startDate = reboot_time
+        args = ServerScriptJobArgs()
+        args.timeOut = 60 * 60
+        args.targets = self.targets
+        userTag = f"smax"
+        jobRef = ServerScriptService.startServerScript(reboot_script_ref, args, userTag, jobNotification, jobSchedule)
 
 
 def main():
 
     ts = auth()
-    settings = CommonSettings(ts, "Public/Netbackup/NP")
-    tmr_0000 = CommonSettings.get_tmr0000()
-    a = settings.get_device_ref("n1psmwind0001")
-    print(a, tmr_0000)
-    # host = PatchedHost(ts, "n1psmwind0001")
-    # host.start_to_patch()
+    settings = PatchAllHostsInDeviceGroup(ts, "Public/Test/NP")
+    tmr_0000 = settings.get_tmr0000()
+    reboot_script_ref = settings.reboot_script_ref() 
+    # tmr_0000 = int(time.time())
+    # Install patch time
+    settings.schedule_win_patch_install(tmr_0000, "Public/Test/NP")
+
+    host = RebootHosts(settings, ["p2vsmsautw0001", "n1vsmsautw0001"])
+    host.schedule_reboot(tmr_0000, reboot_script_ref)
 
 
 if __name__ == '__main__':
     main()
+
