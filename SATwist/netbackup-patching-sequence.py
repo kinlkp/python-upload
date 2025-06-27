@@ -80,9 +80,8 @@ class CommonSettings:
                 self.deviceRefMap[hostname] = devRef
 
 
-    def get_device_ref(self, ts, hostname):
-
-        return self.deviceRefMap
+    def get_device_ref(self, hostname):
+        return self.deviceRefMap[hostname]
 
 
     def get_tmr0000(self):
@@ -114,7 +113,8 @@ def main():
 
     ts = auth()
     settings = CommonSettings(ts, "Public/Netbackup/NP")
-    a = settings.get_device_ref(ts, "n1psmwind0001")
+    tmr_0000 = CommonSettings.get_tmr0000()
+    a = settings.get_device_ref("n1psmwind0001")
     print(a)
     # host = PatchedHost(ts, "n1psmwind0001")
     # host.start_to_patch()
