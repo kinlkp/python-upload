@@ -51,26 +51,74 @@ def auth():
     return ts
 
 
+class CommonSettings:
+    _instance = None  # Class-level variable to hold the single instance
+
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            # If no instance exists, create a new one using the parent's __new__
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+
+    def __init__(self, ts, smaxsubfolder):
+
+        # __init__ is called every time, but only initializes the first time
+        if not hasattr(self, '_initialized'):  # Prevent re-initialization
+            self._initialized = True
+            ServerService = ts.server.ServerService
+            DGS = ts.device.DeviceGroupService
+            ref = DGS.getDeviceGroupByPath(smaxsubfolder.split('/'))
+            self.deviceRefs = DGS.getDevices(ref)
+            self.deviceRefMap = {}
+            for devRef in self.deviceRefs:               
+                vo = ServerService.getServerVO(devRef)
+                pattern = r'(\w+)\..*'
+                match = re.search(pattern, vo.getHostName())
+                hostname = match.group(1)
+                self.deviceRefMap[hostname] = devRef
+
+
+    def get_device_ref(self, ts, hostname):
+
+        return self.deviceRefMap
+
+
+    def get_tmr0000(self):
+        import os
+        import time
+        from datetime import date, datetime, timedelta
+
+        os.environ['TZ'] = 'Asia/Hong_Kong'
+        time.tzset()
+    
+        today = datetime.now()
+        tmr = today + timedelta(1)    # Add 1 day from today
+        tmr_0000 = datetime.combine(tmr, datetime.min.time()).timestamp()
+
+        return tmr_0000
+
+
 class PatchedHost:
 
     def __init__(self, ts, hostname):
         self.ts = ts
         self.hostname = hostname
 
-
     def start_to_patch():
         pass
 
 
 def main():
-    
-    ts = auth()
 
-    host = PatchedHost(ts, "n1psmwind0001")
-    host.start_to_patch()
+    ts = auth()
+    settings = CommonSettings(ts, "Public/Netbackup/NP")
+    a = settings.get_device_ref(ts, "n1psmwind0001")
+    print(a)
+    # host = PatchedHost(ts, "n1psmwind0001")
+    # host.start_to_patch()
 
 
 if __name__ == '__main__':
     main()
-
-
