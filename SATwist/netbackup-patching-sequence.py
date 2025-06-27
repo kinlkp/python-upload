@@ -84,7 +84,7 @@ class CommonSettings:
         return self.deviceRefMap[hostname]
 
 
-    def get_tmr0000(self):
+    def get_tmr0000():
         import os
         import time
         from datetime import date, datetime, timedelta
@@ -96,7 +96,7 @@ class CommonSettings:
         tmr = today + timedelta(1)    # Add 1 day from today
         tmr_0000 = datetime.combine(tmr, datetime.min.time()).timestamp()
 
-        return tmr_0000
+        return int(tmr_0000)
 
 
 class PatchedHost:
@@ -115,7 +115,7 @@ def main():
     settings = CommonSettings(ts, "Public/Netbackup/NP")
     tmr_0000 = CommonSettings.get_tmr0000()
     a = settings.get_device_ref("n1psmwind0001")
-    print(a)
+    print(a, tmr_0000)
     # host = PatchedHost(ts, "n1psmwind0001")
     # host.start_to_patch()
 
