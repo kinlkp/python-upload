@@ -16,13 +16,8 @@ from pytwist.com.opsware.script import ServerScriptJobArgs
 
 
 HOST_REBOOT_SEQ = [
-    ["n1psmwind0001", "n2psmwind0001"],
-    ["n1psmwind0002", "n2psmwind0002"],
-    ["n1psmwind0003", "n2psmwind0003"],
-    ["n1psmwind0004", "n2psmwind0004"],
-    ["n1psmwind0005", "n2psmwind0005"],
-    ["n1psmwind0006", "n2psmwind0006"],
-    ["n1psmwind0007", "n2psmwind0007"]
+    ["n1vsmsautw0001", "p2vsmsautw0001"],
+    ["p1vsmsautw0001", "p1vsmsautw0002"]
 ]
 
 os.environ['TZ'] = 'Asia/Hong_Kong'
@@ -139,21 +134,24 @@ class RebootHosts:
         self.settings = settings
         self.ts = self.settings.ts
         self.targets = []
+
         for h in hostnames:
             self.targets.append(self.settings.get_device_ref(h))
 
 
-    def schedule_reboot(self, tmr_0000, reboot_script_ref):
+    def schedule_reboot(self, reboot_time, reboot_script_ref):
         ServerScriptService = self.ts.script.ServerScriptService
         jobSchedule = JobSchedule()
         jobNotification = JobNotification()
-        reboot_time = tmr_0000 + 39600       # Start to reboot at 11am
         jobSchedule.startDate = reboot_time
         args = ServerScriptJobArgs()
         args.timeOut = 60 * 60
         args.targets = self.targets
         userTag = f"smax"
         jobRef = ServerScriptService.startServerScript(reboot_script_ref, args, userTag, jobNotification, jobSchedule)
+        print(jobRef)
+        
+        return reboot_time + 1200
 
 
 def main():
@@ -166,8 +164,10 @@ def main():
     # Install patch time
     settings.schedule_win_patch_install(tmr_0000, "Public/Test/NP")
 
-    host = RebootHosts(settings, ["p2vsmsautw0001", "n1vsmsautw0001"])
-    host.schedule_reboot(tmr_0000, reboot_script_ref)
+    reboot_time = tmr_0000 + 39600
+    for index, hosts in enumerate(HOST_REBOOT_SEQ):
+        res = RebootHosts(settings, hosts)
+        reboot_time = res.schedule_reboot(reboot_time, reboot_script_ref)
 
 
 if __name__ == '__main__':
