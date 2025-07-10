@@ -23,7 +23,7 @@ disable_warnings(InsecureRequestWarning)
    
 SITESCOPE_PASSWORD = os.environ['SITESCOPE_PASSWORD']
 
-NP_URL = 'https://p1vsmobmaw0010.prod.empf.local/SiteScope'
+NP_URL = 'https://p1vsmobmaw0010.prod.abc.com/SiteScope'
 
 if not sys.argv[4]:
             print("Error: date/time is not provided.")

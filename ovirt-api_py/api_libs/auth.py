@@ -15,8 +15,8 @@ HEADERS = {
 PARAMS = {
     "grant_type": "password",
     "scope": "ovirt-app-api",
-    "username": "admin@internal",
-    "password": "password"
+    "username": "",
+    "password": ""
 }
 
 ROOT_CA = "ca.pem"

@@ -23,7 +23,7 @@ disable_warnings(InsecureRequestWarning)
  
 HOW_LONG = 1
    
-SITESCOPE_PASSWORD = os.environ['SITESCOPE_PASSWORD']
+SITESCOPE_PASSWORD = 'eMPF_Np1!!'
 
  
 def cal_date(start_suppress):
@@ -36,7 +36,7 @@ def check_monitor(host: str, group_name: str, web_URL: str):
     find_url = f'{web_URL}/api/monitors/group/properties'
     params = {'fullPathToGroup': group_name}
     response = requests.get(find_url, params=params, verify=False, 
-                            auth=HTTPBasicAuth(os.environ['SITESCOPE_USER'], SITESCOPE_PASSWORD))
+                            auth=HTTPBasicAuth('administrator', SITESCOPE_PASSWORD))
     output = json.loads(response.text)
     print(f"{host} {output['status']}")
  
@@ -58,9 +58,9 @@ def main(args: argparse.Namespace):
         sys.exit(1)
 
     if host[0] == 'n':
-        web_URL = 'https://n1vsmobmaw0010.nonprod.empf.local/SiteScope'
+        web_URL = 'https://n1vsmobmaw0010.nonprod.abc.com/SiteScope'
     else:
-        web_URL = 'https://p1vsmobmaw0010.prod.empf.local/SiteScope'
+        web_URL = 'https://p1vsmobmaw0010.prod.abc.com/SiteScope'
 
     find_url = f'{web_URL}/api/monitors'
     set_url = f'{web_URL}/api/monitors/group/status'

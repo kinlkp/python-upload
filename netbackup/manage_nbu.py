@@ -22,10 +22,10 @@ disable_warnings(InsecureRequestWarning)
 
 
 NBU_SERVERs = {
-    "p1": "p1psmwindc003.prod.empf.local",
-    "p2": "p2psmwindc003.prod.empf.local",
-    "n1": "n1psmwindc003.nonprod.empf.local",
-    "n2": "n2psmwindc003.nonprod.empf.local",
+    "p1": "p1psmwindc003.prod.abc.com",
+    "p2": "p2psmwindc003.prod.abc.com",
+    "n1": "n1psmwindc003.nonprod.abc.com",
+    "n2": "n2psmwindc003.nonprod.abc.com",
 }
 
 class NBUClient:
