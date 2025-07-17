@@ -36,10 +36,10 @@ class NBUClient:
     }
 
     NBU_SERVERs = {
-        "p1": "p1psmwindc003.prod.empf.local",
-        "p2": "p2psmwindc003.prod.empf.local",
-        "n1": "n1psmwindc003.nonprod.empf.local",
-        "n2": "n2psmwindc003.nonprod.empf.local",
+        "p1": "p1psmwindc003.prod.abc.local",
+        "p2": "p2psmwindc003.prod.abc.local",
+        "n1": "n1psmwindc003.nonprod.abc.local",
+        "n2": "n2psmwindc003.nonprod.abc.local",
     }
 
 
@@ -177,11 +177,11 @@ class SiteScopeClient():
         import socket
         this_host = socket.gethostname()
         if this_host[0] == 'n' and host[0] == 'n':
-            web_URL = 'https://n1vsmobmaw0010.nonprod.empf.local/SiteScope'
+            web_URL = 'https://n1vsmobmaw0010.nonprod.abc.local/SiteScope'
         elif this_host[0] == 'p' and host[0] == 'p':
-            web_URL = 'https://p1vsmobmaw0010.prod.empf.local/SiteScope'
+            web_URL = 'https://p1vsmobmaw0010.prod.abc.local/SiteScope'
         elif this_host[0] == 'p' and host[0] == 'o':
-            web_URL = 'https://p1vsmobmaw0010.prod.empf.local/SiteScope'
+            web_URL = 'https://p1vsmobmaw0010.prod.abc.local/SiteScope'
         else:
             return 'Cannot find sitescope'
 

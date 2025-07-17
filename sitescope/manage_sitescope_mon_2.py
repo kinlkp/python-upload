@@ -23,7 +23,7 @@ disable_warnings(InsecureRequestWarning)
  
 HOW_LONG = 1
    
-SITESCOPE_PASSWORD = 'eMPF_Np1!!'
+SITESCOPE_PASSWORD = ''
 
  
 def cal_date(start_suppress):

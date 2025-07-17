@@ -12,6 +12,6 @@ while True:
 	o = pyautogui.click(2200, 1000)
 	print("********** Clicked mouse ===============")
 	time.sleep(10)
-	o = pyautogui.click(250, 200)
-	time.sleep(10)
+#	o = pyautogui.click(250, 200)
+#	time.sleep(10)
 
