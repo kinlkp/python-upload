@@ -107,7 +107,7 @@ def auth():
     return ts
 
 
-def read_csv():
+def read_schedule_csv():
     ## Read patch info
     smax_num = None
     hosts = []
@@ -139,7 +139,8 @@ def read_csv():
 
 
 if __name__ == '__main__':
-    smax_num, hosts = read_csv()
+
+    smax_num, hosts = read_schedule_csv()
     # Create the device group for SMAX
     root = "Public/SMAX"
     ts = auth()
