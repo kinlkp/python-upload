@@ -171,7 +171,7 @@ def auth():
 def read_servers_csv():
 
     # Download the servers.csv from p2vsmsautl0010
-    download_command='http_proxy="" curl http://10.122.0.21:3001/sasa/servers.csv -o /tmp/servers.csv 2>/tmp/null'
+    download_command='http_proxy="" curl http://192.122.0.21:3001/sasa/servers.csv -o /tmp/servers.csv 2>/tmp/null'
     os.system(download_command)
 
     ## Read patch info
