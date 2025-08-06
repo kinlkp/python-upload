@@ -1,5 +1,0 @@
-venv/*
-*.log
-*ca.pem*
-__pycache__/*
-*/__pycache__/*
